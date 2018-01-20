@@ -1,0 +1,18 @@
+.posts{
+    padding: 2% 0;
+    border-bottom:3px solid #2ab27b ;
+}
+
+.info{
+    color: #c5b143;
+    font-style: italic;
+    font-size: small;
+}
+
+.dbutton {
+    margin-top: 2%;
+}
+
+.dheader{
+    padding: 3% 0;
+}
