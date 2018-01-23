@@ -33,7 +33,38 @@ Route::post('/signin', [
 
 Route::get('/createpost', [
 	'uses' => 'postController@postCreatePost',
-	'as' => 'post.create'
+	'as' => 'post.create',
+	'middeware' => 'auth'
+]);
+
+Route::get('/delete-post/{post_id}', [
+	'uses' => 'postController@getPostDelete',
+	'as' => 'post.delete',
+	'middeware' => 'auth'
+]);
+
+Route::get('/logout',[
+	'uses' =>'UserController@getLogout',
+	'as'=>'get.logout'
+]);
+
+Route::get('/account', [
+	'uses'=>'UserController@getAccount',
+	'as'=>'account'
+]);
+
+Route::post('/updateAccount', [
+	'uses' => 'UserController@saveAccount',
+	'as' => 'account.save'
+	]);
+Route::get('/userImage/(filename)', [
+	'uses'=>'UserController@getUserImage',
+	'as'=> 'account.image'
+]);
+
+Route::post('/edit',[
+	'uses'=> "PostController@postEditPost",
+	'as'=>'edit'
 ]);
 
 Auth::routes();

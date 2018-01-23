@@ -2,9 +2,11 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use App\Role;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller{
 	public function postSignUp(Request $request){
@@ -43,5 +45,48 @@ class UserController extends Controller{
 		}
 			return redirect()->back();
 	}
+
+	public function getAccount(){
+		return view('account', ['user'=>Auth::user()]);
+		//return view('welcome');
+	}
+
+	public function saveAccount(Request $request){
+		$this->validate($request, [
+			'display_name'=>'required|max:40|unique:users'
+		]);
+
+		$user = Auth::user();
+		$user->name = $request['name'];
+		$user->display_name = $request['display_name'];
+		$user->email = $request['email'];
+		$user->update();
+		$file = $request->file('image');
+		$filename = $request->first_name . '-' . $user->id . '.jpg';
+		if($file)
+		{
+			$file->storeAs('local', $filename);
+		}﻿;
+//		$file= $request['image'];
+//		$filename = $request['name'] . '-' . $user->id . '.jpg';
+//		if ($file){
+//
+//			Storage::disk('local')->put($filename, File::get($file));
+//		}
+		return redirect()->route('account');
+
+	}
+
+	public function getUserImage ($filename){
+		$file = Storage::disk('local')->get($filename);
+		return new response($file, 200);
+	}
+
+	public function getLogout(){
+		Auth::logout();
+		return  redirect()->route('home');
+
+	}
+
 
 }

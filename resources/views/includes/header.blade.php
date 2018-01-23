@@ -15,8 +15,8 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Account</a></li>
-                    <li><a href="#">Logout</a></li>
+                    <li><a href='{{ route('account') }}'>Account</a></li>
+                    <li><a href="{{ route('logout') }}">Logout</a></li>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
