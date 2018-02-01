@@ -6,7 +6,6 @@
 {{--Left side of screen dashboard view--}}
 <h1 class="text-center">DashBoard</h1>
     <section class="row">
-        {{--<div class="col-md-1"></div>--}}
 
         <div class = "col-md-6 text-center">
             <header class="dheader">
@@ -21,7 +20,7 @@
             </form>
         </div>
 
-{{--right side f screen on dashboard view--}}
+{{--right side of screen on dashboard view--}}
 
          <div class = "col-md-6 text-center">
             <header class="dheader">
@@ -29,17 +28,18 @@
             </header>
                 @foreach($posts as $post)
                     <article class="posts" data-postId="{{$post->id}}">
+
                         <p>
                             {{$post->body}}
                         </p>
                         <div class="info">
-                            Posted by {{ $post->user->display_name }} on {{ $post->created_at->format('m/d/Y')}}﻿
+                            Posted by {{$post->user->display_name}} on {{ $post->created_at->format('m/d/Y')}}﻿
                         </div>
+
                         <div class="interaction">
-                            <a href="#">Like</a> |
-                            <a href="#">DisLike</a> |
+                                <a href="#" class="like">{{Auth::user()->likes()->where('post_id', $post->id)->first() ?Auth::user()->likes()->where('post_id', $post->id)->first()->likes == 1 ? 'Liked' : 'Like' : 'Like'}}</a>
+                                <a href="#" class="like"> {{Auth::user()->likes()->where('post_id', $post->id)->first() ?Auth::user()->likes()->where('post_id', $post->id)->first()->likes == 0 ? 'Disliked' : 'Dislike' : 'Dislike'}}</a>
                             @if(Auth::user() == $post->user)
-                                |
                                 <a href="#" class="edit" data-postId="{{$post->id}}">Edit</a> |
                                 <a href="{{route('post.delete', ['post_id' => $post->id])}}">Delete</a>
                             @endif
@@ -75,6 +75,7 @@
 </div><!-- /.modal -->
 <script>
     var token = '{{Session::token()}}';
-    var url = '{{route('edit')}}';
+    var urlEdit = '{{route('edit')}}';
+    var urlLike = '{{route('likes')}}';
 </script>
 @endsection

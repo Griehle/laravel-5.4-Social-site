@@ -53,26 +53,22 @@ class UserController extends Controller{
 
 	public function saveAccount(Request $request){
 		$this->validate($request, [
-			'display_name'=>'required|max:40|unique:users'
+			'name'=>'required|max:60|unique:users',
+			'display_name'=> 'required|max:40|unique:users'
 		]);
 
 		$user = Auth::user();
 		$user->name = $request['name'];
 		$user->display_name = $request['display_name'];
-		$user->email = $request['email'];
 		$user->update();
 		$file = $request->file('image');
-		$filename = $request->first_name . '-' . $user->id . '.jpg';
+		$filename = $request->name . '-' . $user->id . '.jpg';
 		if($file)
 		{
-			$file->storeAs('local', $filename);
+			//$file->storeAs('local', $filename);
+			Storage::disk('local')->put($filename, File::get($file));
 		}﻿;
-//		$file= $request['image'];
-//		$filename = $request['name'] . '-' . $user->id . '.jpg';
-//		if ($file){
-//
-//			Storage::disk('local')->put($filename, File::get($file));
-//		}
+
 		return redirect()->route('account');
 
 	}
