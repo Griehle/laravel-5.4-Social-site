@@ -31,16 +31,16 @@ Route::post('/signin', [
 	'as'=>'signin'
 ]);
 
-Route::get('/createpost', [
+Route::post('/createpost', [
 	'uses' => 'postController@postCreatePost',
 	'as' => 'post.create',
-	'middeware' => 'auth'
+	'middleware' => 'auth'
 ]);
 
 Route::get('/delete-post/{post_id}', [
 	'uses' => 'postController@getPostDelete',
 	'as' => 'post.delete',
-	'middeware' => 'auth'
+	'middleware' => 'auth'
 ]);
 
 Route::get('/logout',[
@@ -50,26 +50,31 @@ Route::get('/logout',[
 
 Route::get('/account', [
 	'uses'=>'UserController@getAccount',
-	'as'=>'account'
+	'as'=>'account',
+	'middleware' => 'auth'
 ]);
 
 Route::post('/updateAccount', [
 	'uses' => 'UserController@saveAccount',
-	'as' => 'account.save'
-	]);
+	'as' => 'account.save',
+	'middleware' => 'auth'
+]);
 Route::get('/userImage/{filename}', [
 	'uses'=>'UserController@getUserImage',
-	'as'=> 'account.image'
+	'as'=> 'account.image',
+	'middleware' => 'auth'
 ]);
 
 Route::post('/edit',[
 	'uses'=> "PostController@postEditPost",
-	'as'=>'edit'
+	'as'=>'edit',
+	'middleware' => 'auth'
 ]);
 
 Route::post('/likes', [
 	'uses'=>'PostController@postLikePost',
-	'as'=>'likes'
+	'as'=>'likes',
+	'middleware' => 'auth'
 ]);
 
 Auth::routes();
