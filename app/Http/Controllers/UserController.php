@@ -53,13 +53,14 @@ class UserController extends Controller{
 	}
 
 	public function saveAccount(Request $request){
+		$user = Auth::user();
+		
 		$this->validate($request, [
-			'name'=>'required|max:60|unique:users',
-			'display_name'=> 'required|max:40|unique:users',
+			'name'=>'required|max:60|unique:users,name,' . $user->id,
+			'display_name'=> 'required|max:40|unique:users,display_name,' . $user->id,
 			'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
 		]);
 
-		$user = Auth::user();
 		$user->name = $request['name'];
 		$user->display_name = $request['display_name'];
 		$user->update();
