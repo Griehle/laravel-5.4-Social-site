@@ -11,11 +11,11 @@
             <header class="dheader">
                 <h3>What do you have to say?</h3>
             </header>
-            <form action ='{{route('post.create')}}'>
+            <form action ='{{route('post.create')}}' method="post">
                 <div class="form-group">
                     <textarea class="form-control" name="new-post" id="new-post" cols="6" placeholder="Your Post here" ></textarea>
                     <button type="submit" class="btn btn-primary dbutton">Submit post</button>
-                    <input type="hidden" value="{{Session::token()}}">
+                    <input type="hidden" name="_token" value="{{Session::token()}}">
                 </div>
             </form>
         </div>

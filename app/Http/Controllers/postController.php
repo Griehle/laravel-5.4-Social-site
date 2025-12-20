@@ -37,7 +37,10 @@ class postController extends Controller {
 	public function getPostDelete($post_id){
 
 		$post = Post::where('id', $post_id)->first();
-		if (Auth::user() != $post->user){
+		if (!$post) {
+			return redirect()->route('dashboard')->with(['message'=>'Post not found']);
+		}
+		if (Auth::user()->id != $post->user->id){
 			return redirect()->back();
 		}
 		$post->delete();
@@ -46,11 +49,15 @@ class postController extends Controller {
 
 	public function postEditPost(Request $request){
 		$this->validate($request,[
-			'body'=>'required'
+			'body'=>'required|max:1000',
+			'postId'=>'required|integer|exists:posts,id'
 		]);
 		$post = Post::find($request['postId']);
-		if (Auth::user() != $post->user){
-			return redirect()->back();
+		if (!$post) {
+			return response()->json(['error' => 'Post not found'], 404);
+		}
+		if (Auth::user()->id != $post->user->id){
+			return response()->json(['error' => 'Unauthorized'], 403);
 		}
 
 		$post->body = $request['body'];
@@ -59,12 +66,17 @@ class postController extends Controller {
 	}
 
 	public function postLikePost(Request $request){
+		$this->validate($request,[
+			'postId'=>'required|integer|exists:posts,id',
+			'isLike'=>'required|in:true,false'
+		]);
+		
 		$post_id = $request['postId'];
 		$is_like = $request['isLike'] === 'true' ? true: false;
 		$update = false;
 		$post = Post::find($post_id);
 		if(!$post){
-			return null;
+			return response()->json(['error' => 'Post not found'], 404);
 		}
 
 		$user = Auth::user();
@@ -75,7 +87,7 @@ class postController extends Controller {
 			$update = true;
 			if($like_value == $is_like) {
 				$like->delete();
-				return null;
+				return response()->json(['status' => 'removed'], 200);
 			}
 		}else{
 			$like = new likes();
@@ -88,6 +100,6 @@ class postController extends Controller {
 		}else{
 			$like->save();
 		}
-		return null;
+		return response()->json(['status' => 'success'], 200);
 	}
 }

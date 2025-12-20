@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -52,28 +53,42 @@ class UserController extends Controller{
 	}
 
 	public function saveAccount(Request $request){
+		$user = Auth::user();
+		
 		$this->validate($request, [
-			'name'=>'required|max:60|unique:users',
-			'display_name'=> 'required|max:40|unique:users'
+			'name'=>'required|max:60|unique:users,name,' . $user->id,
+			'display_name'=> 'required|max:40|unique:users,display_name,' . $user->id,
+			'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
 		]);
 
-		$user = Auth::user();
 		$user->name = $request['name'];
 		$user->display_name = $request['display_name'];
 		$user->update();
 		$file = $request->file('image');
-		$filename = $request->name . '-' . $user->id . '.jpg';
-		if($file)
+		if($file && $file->isValid())
 		{
-			//$file->storeAs('local', $filename);
+			$extension = $file->getClientOriginalExtension();
+			$filename = 'user-' . $user->id . '.' . $extension;
 			Storage::disk('local')->put($filename, File::get($file));
-		}﻿;
+		}
 
 		return redirect()->route('account');
 
 	}
 
 	public function getUserImage ($filename){
+		// Sanitize filename to prevent path traversal attacks
+		$filename = basename($filename);
+		
+		// Validate filename pattern (only allow user images)
+		if (!preg_match('/^user-\d+\.(jpg|jpeg|png|gif)$/', $filename)) {
+			abort(404);
+		}
+		
+		if (!Storage::disk('local')->exists($filename)) {
+			abort(404);
+		}
+		
 		$file = Storage::disk('local')->get($filename);
 		return new response($file, 200);
 	}
